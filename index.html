@@ -1,39 +1,18 @@
 <!doctype html>
 <meta charset=utf-8>
-<title>3D map editor</title>
-
+<title>3D level editor</title>
 <body id=b>
-
 <div id=viewport>
   <div id=center>
-      <div id=scene_perspective>
-        <div id=scene>
-          <div id=things></div>
-          <div id=grid>
-            <div class=tile style=top:0px;left:0px></div>
-            <div class=tile style=top:0px;left:500px></div>
-            <div class=tile style=top:500px;left:0px></div>
-            <div class=tile style=top:500px;left:500px></div>
-            <div class=tile style=top:0px;left:1500px></div>
-            <div class=tile style=top:0px;left:1000px></div>
-            <div class=tile style=top:500px;left:1500px></div>
-            <div class=tile style=top:500px;left:1000px></div>
-            <div class=tile style=top:1000px;left:0px></div>
-            <div class=tile style=top:1000px;left:500px></div>
-            <div class=tile style=top:1500px;left:0px></div>
-            <div class=tile style=top:1500px;left:500px></div>
-            <div class=tile style=top:1000px;left:1500px></div>
-            <div class=tile style=top:1000px;left:1000px></div>
-            <div class=tile style=top:1500px;left:1500px></div>
-            <div class=tile style=top:1500px;left:1000px></div>
-          </div>
-          <div id=ground></div>
-        </div>
+    <div id=scene_perspective>
+      <div id=scene>
+        <div id=things></div>
+        <div id=grid></div>
+        <div id=ground></div>
       </div>
+    </div>
   </div>
 </div>
-
-
 <button id=b_2D>2D iso</button>
 <button id=b_3D>3D</button>
 <button id=b_fps>3D FPS</button>
@@ -46,10 +25,6 @@
 <button id=b_mu>⬆︎</button>
 <button id=b_md>⬇︎</button>
 <button id=b_export>export</button>
-
-
-</body>
-
 <style>
 * { transform-style: preserve-3d; box-sizing: border-box; margin: 0; padding: 0; }
 body * { transition: .5s; }
@@ -70,44 +45,40 @@ body.fps #scene_perspective { transform: rotateX(90deg); }
 .cube div { width: 500px; height: 500px; position: absolute; background: rgb(50,50,255); transform-origin: center center; border: 5px solid #000; }
 .cube .up { transform: translateZ(250px); background: blue; }
 .cube .down { transform: translateZ(-250px); background: blue; }
-
 .cube .left { transform: translateX(-250px) rotateY(90deg); background: red; }
 .cube .right { transform: translateX(250px) rotateY(90deg); background: red; }
 .cube .front { transform: translateY(250px) rotateX(90deg); background: yellow; }
 .cube .back { transform: translateY(-250px) rotateX(90deg); background: yellow; }
 #ground { width: 8000px; height: 8000px; background: rgba(0,128,0,0.9); transform: translateX(-3000px) translateY(-3000px) translateZ(-100px); position: fixed; border-radius: 50%; }
 .sprite { font-size: 200px; }
-
 </style>
 
 <script>
-
-
+for(i=0;i<5;i++){
+  for(j=0;j<5;j++){
+    grid.innerHTML+=`<div class=tile style=top:${i*500}px;left:${j*500}px></div>`;
+  }
+}
 b_3D.onclick = function(){b.className = ""};
 b_2D.onclick = function(){b.className = "iso"};
 b_fps.onclick = function(){b.className = "fps"};
-
 x = y = -1000;
 z = 0;
 rotz = 0;
 rotx = 500;
-
 move_scene = function(){
   scene.style.transformOrigin = (-x) + "px " + (-y) + "px";
   scene.style.transform = "translateX(" + x + "px) translateY(" + y + "px) translateZ(" + z + "px) rotateZ(" + rotz + "rad)";
   grid.style.transform = "translateZ(" + (-z) + "px)";
 }
-
 xoffset = function(o){
   x += o * Math.cos(rotz);
   y += o * Math.sin(rotz);
 }
-
 yoffset = function(o){
   y += o * Math.cos(rotz);
   x += o * Math.sin(rotz);
 }
-
 b_export.onclick = function(){alert(JSON.stringify(data))};
 b_rl.onclick = function(){rotz -= Math.PI/4; move_scene()};
 b_rr.onclick = function(){rotz += Math.PI/4; move_scene()};
@@ -118,10 +89,9 @@ b_mu.onclick = function(){z -= 500; move_scene()};
 b_mf.onclick = function(){yoffset(-500); move_scene()};
 b_mb.onclick = function(){yoffset(500); move_scene()};
 move_scene();
-
 onmousemove = e => {
   if(e.target.className == "tile"){
-    e.target.innerHTML = 
+    e.target.innerHTML =
 `<div class=cube>
   <div class=up></div>
   <div class=down></div>
@@ -137,14 +107,11 @@ onmouseout = e => {
     e.target.innerHTML = "";
   }
 }
-
 sprites = 0;
 sprites_styles = [];
 data = [];
-
 onclick = e => {
   if(e.which == 1){
-  
     if(e.target.className == "tile"){
       things.innerHTML += 
   `<div class=cube style="position: fixed; transform: translateX(0) translateY(0) translateZ(` + (250 - z) + `px); left:` + e.target.style.left + `; top: ` + e.target.style.top + `;">
@@ -155,13 +122,10 @@ onclick = e => {
     <div class=front></div>
     <div class=back></div>
   </div>`;
-  
       data.push({type: "cube", x: parseInt(e.target.style.left)/500, y: parseInt(e.target.style.top)/500, z: -z / 500}); 
     }
-    
   }
 }
-
 oncontextmenu = e => {
   e.preventDefault();
   if(e.target.className == "tile"){
@@ -171,12 +135,9 @@ oncontextmenu = e => {
     data.push({type: "sprite", x: parseInt(e.target.style.left)/500, y: parseInt(e.target.style.top)/500, z: -z / 500}); 
   }
 }
-
 setInterval(function(){
   for(i = 0; i < sprites; i++){
     top["sprite" + i].style.transform = sprites_styles[i] + " rotateY(" + (rotz) + "rad)";
   }
 }, 33);
-
-
 </script>

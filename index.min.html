@@ -1,0 +1,34 @@
+<!doctype html>
+<meta charset=utf-8>
+<title>3D level editor</title>
+<body id=b>
+<div id=viewport>
+<div id=center>
+<div id=scene_perspective>
+<div id=scene>
+<div id=things></div>
+<div id=grid></div>
+<div id=ground></div>
+</div>
+</div>
+</div>
+</div>
+<button id=b_2D>2D iso
+<button id=b_3D>3D
+<button id=b_fps>3D FPS
+<button id=b_rr>↻
+<button id=b_rl>↺
+<button id=b_mr>→
+<button id=b_ml>←
+<button id=b_mb>↑
+<button id=b_mf>↓
+<button id=b_mu>⬆︎
+<button id=b_md>⬇︎
+<button id=b_export>export
+<style>
+#center,#scene{width:0;height:0}#center,#grid,#scene,#viewport,body *{transition:.5s}*{transform-style:preserve-3d;box-sizing:border-box;margin:0;padding:0}body{background:#abf}button{z-index:2;padding:5px;font-size:18px}#viewport{width:100vw;height:100vh;position:fixed;top:0;overflow:hidden;perspective:900px}#center{position:relative;left:50%;top:50%;border:25px solid red;transform:translateZ(-3000px)}.cube,.cube div,.tile{position:absolute}#scene_perspective{width:0;height:0;transform-origin:50% 50%;transform:rotateX(60deg)}.tile{box-shadow:0 0 0 10px #000;width:500px;height:500px}body.iso #viewport{perspective:none}body.iso #center{transform:scale(.1)}body.iso #scene_perspective{transform:rotateX(90deg)}body.fps #center{transform:translateZ(900px) translateY(100px)}body.fps #scene_perspective{transform:rotateX(90deg)}.cube{width:0;height:0;transform:translateZ(250px);top:0;left:0;pointer-events:none}.cube div{width:500px;height:500px;background:#3232ff;transform-origin:center center;border:5px solid #000}.cube .up{transform:translateZ(250px);background:#00f}.cube .down{transform:translateZ(-250px);background:#00f}.cube .left{transform:translateX(-250px) rotateY(90deg);background:red}.cube .right{transform:translateX(250px) rotateY(90deg);background:red}.cube .front{transform:translateY(250px) rotateX(90deg);background:#ff0}.cube .back{transform:translateY(-250px) rotateX(90deg);background:#ff0}#ground{width:8000px;height:8000px;background:rgba(0,128,0,.9);transform:translateX(-3000px) translateY(-3000px) translateZ(-100px);position:fixed;border-radius:50%}.sprite{font-size:200px}
+</style>
+<script>
+for(i=0;5>i;i++)for(j=0;5>j;j++)grid.innerHTML+="<div class=tile style=top:"+500*i+"px;left:"+500*j+"px></div>";
+b_3D.onclick=function(){b.className=""};b_2D.onclick=function(){b.className="iso"};b_fps.onclick=function(){b.className="fps"};x=y=-1E3;rotz=z=0;rotx=500;move_scene=function(){scene.style.transformOrigin=-x+"px "+-y+"px";scene.style.transform="translateX("+x+"px) translateY("+y+"px) translateZ("+z+"px) rotateZ("+rotz+"rad)";grid.style.transform="translateZ("+-z+"px)"};xoffset=function(a){x+=a*Math.cos(rotz);y+=a*Math.sin(rotz)};yoffset=function(a){y+=a*Math.cos(rotz);x+=a*Math.sin(rotz)};b_export.onclick=function(){alert(JSON.stringify(data))};b_rl.onclick=function(){rotz-=Math.PI/4;move_scene()};b_rr.onclick=function(){rotz+=Math.PI/4;move_scene()};b_mr.onclick=function(){xoffset(-500);move_scene()};b_ml.onclick=function(){xoffset(500);move_scene()};b_md.onclick=function(){z+=500;move_scene()};b_mu.onclick=function(){z-=500;move_scene()};b_mf.onclick=function(){yoffset(-500);move_scene()};b_mb.onclick=function(){yoffset(500);move_scene()};move_scene();onmousemove=function(a){"tile"==a.target.className&&(a.target.innerHTML="<div class=cube>\n  <div class=up></div>\n  <div class=down></div>\n  <div class=left></div>\n  <div class=right></div>\n  <div class=front></div>\n  <div class=back></div>\n</div>")};onmouseout=function(a){"tile"==a.target.className&&(a.target.innerHTML="")};sprites=0;sprites_styles=[];data=[];onclick=function(a){1==a.which&&"tile"==a.target.className&&(things.innerHTML+='<div class=cube style="position: fixed; transform: translateX(0) translateY(0) translateZ('+(250-z)+"px); left:"+a.target.style.left+"; top: "+a.target.style.top+';">\n    <div class=up></div>\n    <div class=down></div>\n    <div class=left></div>\n    <div class=right></div>\n    <div class=front></div>\n    <div class=back></div>\n  </div>',data.push({type:"cube",x:parseInt(a.target.style.left)/500,y:parseInt(a.target.style.top)/500,z:-z/500}))};oncontextmenu=function(a){a.preventDefault();"tile"==a.target.className&&(sprites_styles[sprites]="translateX(0) translateY(0) translateZ("+(-z+120)+"px) rotateX(-90deg)",things.innerHTML+="<div class=sprite id=sprite"+sprites+' style="position: fixed; transform: '+sprites_styles[sprites]+"; left:"+a.target.style.left+"; top: "+a.target.style.top+';">\ud83d\udc0c</div>',sprites++,data.push({type:"sprite",x:parseInt(a.target.style.left)/500,y:parseInt(a.target.style.top)/500,z:-z/500}))};setInterval(function(){for(i=0;i<sprites;i++)top["sprite"+i].style.transform=sprites_styles[i]+" rotateY("+rotz+"rad)"},33);
+</script>
