@@ -1,0 +1,182 @@
+<!doctype html>
+<meta charset=utf-8>
+<title>3D map editor</title>
+
+<body id=b>
+
+<div id=viewport>
+  <div id=center>
+      <div id=scene_perspective>
+        <div id=scene>
+          <div id=things></div>
+          <div id=grid>
+            <div class=tile style=top:0px;left:0px></div>
+            <div class=tile style=top:0px;left:500px></div>
+            <div class=tile style=top:500px;left:0px></div>
+            <div class=tile style=top:500px;left:500px></div>
+            <div class=tile style=top:0px;left:1500px></div>
+            <div class=tile style=top:0px;left:1000px></div>
+            <div class=tile style=top:500px;left:1500px></div>
+            <div class=tile style=top:500px;left:1000px></div>
+            <div class=tile style=top:1000px;left:0px></div>
+            <div class=tile style=top:1000px;left:500px></div>
+            <div class=tile style=top:1500px;left:0px></div>
+            <div class=tile style=top:1500px;left:500px></div>
+            <div class=tile style=top:1000px;left:1500px></div>
+            <div class=tile style=top:1000px;left:1000px></div>
+            <div class=tile style=top:1500px;left:1500px></div>
+            <div class=tile style=top:1500px;left:1000px></div>
+          </div>
+          <div id=ground></div>
+        </div>
+      </div>
+  </div>
+</div>
+
+
+<button id=b_2D>2D iso</button>
+<button id=b_3D>3D</button>
+<button id=b_fps>3D FPS</button>
+<button id=b_rr>↻</button>
+<button id=b_rl>↺</button>
+<button id=b_mr>→</button>
+<button id=b_ml>←</button>
+<button id=b_mb>↑</button>
+<button id=b_mf>↓</button>
+<button id=b_mu>⬆︎</button>
+<button id=b_md>⬇︎</button>
+<button id=b_export>export</button>
+
+
+</body>
+
+<style>
+* { transform-style: preserve-3d; box-sizing: border-box; margin: 0; padding: 0; }
+body * { transition: .5s; }
+body { background: #abf }
+button { z-index: 2; padding: 5px; font-size: 18px; }
+#viewport { width: 100vw; height: 100vh; position: fixed; top: 0; left; 0; overflow: hidden; perspective: 900px; transition: .5s }
+#center { width: 0; height: 0; position: relative; left: 50%; top: 50%; transition:.5s; border: 25px solid red; transform: translateZ(-3000px); }
+#scene_perspective { width: 0; height: 0; transform-origin: 50% 50%; transform: rotateX(60deg); }
+#scene { width: 0; height: 0; transition: .5s; }
+.tile { position: absolute; box-shadow: 0 0 0 10px black; width: 500px; height: 500px; }
+#grid { transition: .5s }
+body.iso #viewport { perspective: none; }
+body.iso #center { transform: scale(.1); }
+body.iso #scene_perspective { transform: rotateX(90deg); }
+body.fps #center { transform: translateZ(900px) translateY(100px); }
+body.fps #scene_perspective { transform: rotateX(90deg); }
+.cube { width: 0; height: 0; transform: translateZ(250px); position: absolute; top: 0; left: 0; pointer-events: none; }
+.cube div { width: 500px; height: 500px; position: absolute; background: rgb(50,50,255); transform-origin: center center; border: 5px solid #000; }
+.cube .up { transform: translateZ(250px); background: blue; }
+.cube .down { transform: translateZ(-250px); background: blue; }
+
+.cube .left { transform: translateX(-250px) rotateY(90deg); background: red; }
+.cube .right { transform: translateX(250px) rotateY(90deg); background: red; }
+.cube .front { transform: translateY(250px) rotateX(90deg); background: yellow; }
+.cube .back { transform: translateY(-250px) rotateX(90deg); background: yellow; }
+#ground { width: 8000px; height: 8000px; background: rgba(0,128,0,0.9); transform: translateX(-3000px) translateY(-3000px) translateZ(-100px); position: fixed; border-radius: 50%; }
+.sprite { font-size: 200px; }
+
+</style>
+
+<script>
+
+
+b_3D.onclick = function(){b.className = ""};
+b_2D.onclick = function(){b.className = "iso"};
+b_fps.onclick = function(){b.className = "fps"};
+
+x = y = -1000;
+z = 0;
+rotz = 0;
+rotx = 500;
+
+move_scene = function(){
+  scene.style.transformOrigin = (-x) + "px " + (-y) + "px";
+  scene.style.transform = "translateX(" + x + "px) translateY(" + y + "px) translateZ(" + z + "px) rotateZ(" + rotz + "rad)";
+  grid.style.transform = "translateZ(" + (-z) + "px)";
+}
+
+xoffset = function(o){
+  x += o * Math.cos(rotz);
+  y += o * Math.sin(rotz);
+}
+
+yoffset = function(o){
+  y += o * Math.cos(rotz);
+  x += o * Math.sin(rotz);
+}
+
+b_export.onclick = function(){alert(JSON.stringify(data))};
+b_rl.onclick = function(){rotz -= Math.PI/4; move_scene()};
+b_rr.onclick = function(){rotz += Math.PI/4; move_scene()};
+b_mr.onclick = function(){xoffset(-500); move_scene()};
+b_ml.onclick = function(){xoffset(500); move_scene()};
+b_md.onclick = function(){z += 500; move_scene()};
+b_mu.onclick = function(){z -= 500; move_scene()};
+b_mf.onclick = function(){yoffset(-500); move_scene()};
+b_mb.onclick = function(){yoffset(500); move_scene()};
+move_scene();
+
+onmousemove = e => {
+  if(e.target.className == "tile"){
+    e.target.innerHTML = 
+`<div class=cube>
+  <div class=up></div>
+  <div class=down></div>
+  <div class=left></div>
+  <div class=right></div>
+  <div class=front></div>
+  <div class=back></div>
+</div>`;
+  }
+}
+onmouseout = e => {
+  if(e.target.className == "tile"){
+    e.target.innerHTML = "";
+  }
+}
+
+sprites = 0;
+sprites_styles = [];
+data = [];
+
+onclick = e => {
+  if(e.which == 1){
+  
+    if(e.target.className == "tile"){
+      things.innerHTML += 
+  `<div class=cube style="position: fixed; transform: translateX(0) translateY(0) translateZ(` + (250 - z) + `px); left:` + e.target.style.left + `; top: ` + e.target.style.top + `;">
+    <div class=up></div>
+    <div class=down></div>
+    <div class=left></div>
+    <div class=right></div>
+    <div class=front></div>
+    <div class=back></div>
+  </div>`;
+  
+      data.push({type: "cube", x: parseInt(e.target.style.left)/500, y: parseInt(e.target.style.top)/500, z: -z / 500}); 
+    }
+    
+  }
+}
+
+oncontextmenu = e => {
+  e.preventDefault();
+  if(e.target.className == "tile"){
+    sprites_styles[sprites] = `translateX(0) translateY(0) translateZ(` + ( - z + 120) + `px) rotateX(-90deg)`;
+    things.innerHTML += `<div class=sprite id=sprite` + sprites + ` style="position: fixed; transform: `+sprites_styles[sprites]+`; left:` + e.target.style.left + `; top: ` + e.target.style.top + `;">🐌</div>`;
+    sprites++;
+    data.push({type: "sprite", x: parseInt(e.target.style.left)/500, y: parseInt(e.target.style.top)/500, z: -z / 500}); 
+  }
+}
+
+setInterval(function(){
+  for(i = 0; i < sprites; i++){
+    top["sprite" + i].style.transform = sprites_styles[i] + " rotateY(" + (rotz) + "rad)";
+  }
+}, 33);
+
+
+</script>
