@@ -24,6 +24,7 @@
 <button id=b_mf>↓</button>
 <button id=b_mu>⬆︎</button>
 <button id=b_md>⬇︎</button>
+<button id=b_rot>rotate last cube</button>
 <button id=b_export>export</button>
 <style>
 * { transform-style: preserve-3d; box-sizing: border-box; margin: 0; padding: 0; }
@@ -41,7 +42,7 @@ body.iso #center { transform: scale(.1); }
 body.iso #scene_perspective { transform: rotateX(90deg); }
 body.fps #center { transform: translateZ(900px) translateY(100px); }
 body.fps #scene_perspective { transform: rotateX(90deg); }
-.cube { width: 0; height: 0; transform: translateZ(250px); position: absolute; top: 0; left: 0; pointer-events: none; }
+.cube { width: 500px; height: 500px; transform: translateZ(250px); position: absolute; top: 0; left: 0; pointer-events: none; transform-origin: 250px 250px;}
 .cube div { width: 500px; height: 500px; position: absolute; background: rgb(50,50,255); transform-origin: center center; border: 5px solid #000; }
 .cube .up { transform: translateZ(250px); background: blue; }
 .cube .down { transform: translateZ(-250px); background: blue; }
@@ -88,6 +89,11 @@ b_md.onclick = function(){z += 500; move_scene()};
 b_mu.onclick = function(){z -= 500; move_scene()};
 b_mf.onclick = function(){yoffset(-500); move_scene()};
 b_mb.onclick = function(){yoffset(500); move_scene()};
+b_rot.onclick = function(){
+  last_cube_rotation += Math.PI/2;
+  top["cube"+(cubes-1)].style.transform = top["cube"+(cubes-1)].style.transform.replace(/$|rotateZ\(.*?\)$/, "rotateZ(" + last_cube_rotation + "rad)");
+  data[data.length-1].angle = (parseFloat((last_cube_rotation/(Math.PI*2)).toFixed(2))%1);
+};
 move_scene();
 onmousemove = e => {
   if(e.target.className == "tile"){
@@ -109,12 +115,14 @@ onmouseout = e => {
 }
 sprites = 0;
 sprites_styles = [];
+cubes = 0;
+last_cube_rotation = 0;
 data = [];
 onclick = e => {
   if(e.which == 1){
     if(e.target.className == "tile"){
       things.innerHTML += 
-  `<div class=cube style="position: fixed; transform: translateX(0) translateY(0) translateZ(` + (250 - z) + `px); left:` + e.target.style.left + `; top: ` + e.target.style.top + `;">
+  `<div id=cube${cubes} class=cube style="position: fixed; transform: translateX(0) translateY(0) translateZ(` + (250 - z) + `px); left:` + e.target.style.left + `; top: ` + e.target.style.top + `;">
     <div class=up></div>
     <div class=down></div>
     <div class=left></div>
@@ -122,7 +130,9 @@ onclick = e => {
     <div class=front></div>
     <div class=back></div>
   </div>`;
-      data.push({type: "cube", x: parseInt(e.target.style.left)/500, y: parseInt(e.target.style.top)/500, z: -z / 500}); 
+      cubes++;
+      data.push({type: "cube", x: parseInt(e.target.style.left)/500, y: parseInt(e.target.style.top)/500, z: -z / 500, angle: 0});
+      last_cube_rotation = 0;
     }
   }
 }
