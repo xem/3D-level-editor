@@ -146,7 +146,7 @@ onclick = e => {
     <div class=back></div>
   </div>`;
       cubes++;
-      data.push({type: "cube", x: parseInt(e.target.style.left)/500, y: parseInt(e.target.style.top)/500, z: -z / 500, angle: 0});
+      data.push({type: shape, x: parseInt(e.target.style.left)/500, y: parseInt(e.target.style.top)/500, z: -z / 500, angle: 0});
       last_cube_rotation = 0;
     }
   }
