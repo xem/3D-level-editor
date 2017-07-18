@@ -16,5 +16,6 @@ body.fps #center { transform: translateZ(900px) translateY(100px); }
 body.fps #scene_perspective { transform: rotateX(90deg); }
 .shape { position:fixed; width: 500px; height: 500px; transform-style: preserve-3d; transform: translateZ(250px); position: absolute; top: 0; left: 0; pointer-events: none; transform-origin: 250px 250px; }
 .shape.temp div { opacity: .5; }
+.shape.shape_sprite.temp { opacity: .5; }
 #ground { border-radius: 50%; width: 9000px; height: 9000px; background: rgba(0,128,0,0.9); transform: translateX(-3000px) translateY(-3000px) translateZ(-100px); position: fixed; }
 .shape_sprite { font-size: 250px; transform: rotateX(-90deg); }
