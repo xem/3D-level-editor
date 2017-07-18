@@ -1,0 +1,20 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body * { transition: .5s; }
+body { background: #abf; }
+button { z-index: 2; padding: 5px; font-size: 18px; transform-style: preserve-3d; }
+#viewport { width: 100vw; height: 100vh; position: fixed; top: 0; left; 0; overflow: hidden; perspective: 900px; transition: .5s; }
+#center { width: 0; height: 0; position: relative; left: 50%; top: 50%; transition:.5s; border: 25px solid red; transform: translateZ(-3000px); transform-style: preserve-3d; }
+#scene_perspective { width: 0; height: 0; transform-origin: 50% 50%; transform: rotateX(60deg); transform-style: preserve-3d; }
+#scene { width: 0; height: 0; transition: .5s; transform-style: preserve-3d; }
+#things { transform-style: preserve-3d; }
+#grid { transition: .5s; transform-style: preserve-3d; }
+.tile { position: absolute; box-shadow: 0 0 0 10px black; width: 500px; height: 500px; transform-style: preserve-3d; }
+body.iso #viewport { perspective: none; }
+body.iso #center { transform: scale(.1); }
+body.iso #scene_perspective { transform: rotateX(90deg); }
+body.fps #center { transform: translateZ(900px) translateY(100px); }
+body.fps #scene_perspective { transform: rotateX(90deg); }
+.shape { position:fixed; width: 500px; height: 500px; transform-style: preserve-3d; transform: translateZ(250px); position: absolute; top: 0; left: 0; pointer-events: none; transform-origin: 250px 250px; }
+.shape.temp div { opacity: .5; }
+#ground { border-radius: 50%; width: 9000px; height: 9000px; background: rgba(0,128,0,0.9); transform: translateX(-3000px) translateY(-3000px) translateZ(-100px); position: fixed; }
+.shape_sprite { font-size: 250px; transform: rotateX(-90deg); }

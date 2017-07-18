@@ -1,0 +1,17 @@
+.cube div { width: 500px; height: 500px; position: absolute; transform-origin: center center; border: 5px solid #000; }
+.cube .up { transform: translateZ(250px); background: blue; }
+.cube .down { transform: translateZ(-250px); background: blue; }
+.cube .left { transform: translateX(-250px) rotateY(90deg); background: red; }
+.cube .right { transform: translateX(250px) rotateY(90deg); background: red; }
+.cube .front { transform: translateY(250px) rotateX(90deg); background: yellow; }
+.cube .back { transform: translateY(-250px) rotateX(90deg); background: yellow; }
+
+.pyramid div { width: 500px; height: 500px; position: absolute; transform-origin: center center; width: 0; height: 0; background: none; border-left: 250px solid transparent; border-right: 250px solid transparent; }
+.pyramid .up { display: none; }
+.pyramid .down { display: none; }
+.pyramid .front { transform: translateZ(-30px) translateY(125px) rotateX(-60deg) rotateZ(0deg); border-bottom: 500px solid red; }
+.pyramid .back { transform: translateZ(-30px) translateY(-125px) rotateX(60deg) rotateZ(180deg); border-bottom: 500px solid yellow; }
+.pyramid .left { transform: translateZ(-30px) translateX(-125px) rotateY(-60deg) rotateZ(90deg); border-bottom: 500px solid blue; }
+.pyramid .right { transform: translateZ(-30px) translateX(125px) rotateY(60deg) rotateZ(-90deg); border-bottom: 500px solid white; }
+
+.shape_sprite { font-size: 200px; transform: rotateX(-90deg); }
